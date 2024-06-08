@@ -22,6 +22,7 @@ const Login = () => {
     let obj = await axios.post("http://localhost:8080/login", formData);
     console.log(obj.data);
     if (obj.data.res == true) {
+      localStorage.setItem("Token", obj.data.Token)
       navigate('/');
     }
     else {

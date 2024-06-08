@@ -25,6 +25,7 @@ const Signup = () => {
     console.log(obj);
 
     if(obj.data.res == true ){
+      localStorage.setItem("Token" , obj.data.Token)
       Navigate("/")
     }else{
       setMsg(obj.data.msg);
