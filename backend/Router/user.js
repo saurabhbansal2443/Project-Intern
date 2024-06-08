@@ -1,9 +1,9 @@
 import express from "express";
-import { homePage, login, signup  , internshipApply} from "../Controller/user.js";
+import { addInternship, homePage, login, signup } from "../Controller/user.js";
 
 let userRouter = express.Router();
 
-userRouter.get("/allInternship", homePage).post("/login", login).post("/signup", signup)
-.post('/apply/:id', internshipApply);
+userRouter.get("/allInternship", homePage).post("/login", login).post("/signup", signup).post('/addinternship',addInternship)
+
 
 export default userRouter;

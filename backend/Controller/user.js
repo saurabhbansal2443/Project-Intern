@@ -1,6 +1,11 @@
 import User from "../Model/user.js";
 import Internship from "../Model/internship.js";
 import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken'
+
+
+
+
 
 let homePage = async (req, res) => {
   try {
@@ -16,7 +21,7 @@ let login = async (req, res) => {
   try {
     let data = req.body;
 
-    let {password } = data ;
+    let {password , email } = data ;
 
     let user = await User.findOne( { email: data.email });
 
@@ -29,7 +34,9 @@ let login = async (req, res) => {
     let result = await bcrypt.compare(userPassword, hashedPassword);
     console.log(result)
     if(result == true ){
-      return res.send({msg : "Authentication Sucess" , res : true });
+      let token = jwt.sign({email : email }, process.env.SECRET_KEY); //JWT token
+   
+      return res.send({msg : "Authentication Sucess" , res : true  , Token : token});
     }else{
       return res.send({msg : "Email/Password is wrong " , res : false });
     }
@@ -46,9 +53,7 @@ let signup = async (req, res) => {
   console.log("signup")
   try {
     let userData = req.body;
-    let {  password } = userData;
-
-    console.log(userData)
+    let {  email , password } = userData;
 
     let salt = await bcrypt.genSalt(10); // Generating the salt
     let hashPassword = await bcrypt.hash(password, salt); // generating the hashed password
@@ -56,7 +61,11 @@ let signup = async (req, res) => {
 
     let user = new User(userData); // This is only to create the USER
     let data = await user.save(); // THis is to save in DB
-    res.send({msg : data , res : true });
+
+    let token = jwt.sign({email : email }, process.env.SECRET_KEY); //JWT token 
+    console.log(token)
+    
+    res.send({msg : data , res : true , Token : token });
 
   } catch (err) {
     console.log(err);
@@ -65,12 +74,13 @@ let signup = async (req, res) => {
 };
 
 let internshipApply = async (req, res) => {
-  try {
-    let id = req.params.id;
-    res.send("Not DoNE yet ", id);
-  } catch (err) {
-    res.send(err);
-  }
+  res.send({msg : "sucess" , user : req.user  , res:true })
 };
 
-export { homePage, login, signup, internshipApply };
+let addInternship = async ( req, res )=>{
+  let {user , _id } = req.body ;
+  let data = await User.findOneAndUpdate({email : user.email}, {internshipIds : [...user.internshipIds , _id ]} , {new : true })
+  res.send(data);
+}
+
+export { homePage, login, signup, internshipApply ,addInternship};
