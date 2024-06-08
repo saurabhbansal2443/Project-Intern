@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link } from 'react-router-dom';
 import axios from "axios"
 
 const Login = () => {
@@ -21,11 +21,11 @@ const Login = () => {
   let validateUser = async () => {
     let obj = await axios.post("http://localhost:8080/login", formData);
     console.log(obj.data);
-    if (obj.data == true) {
+    if (obj.data.res == true) {
       navigate('/');
     }
     else {
-      setMsg(true);
+      setMsg(obj.data.msg);
     }
   };
 
@@ -37,7 +37,7 @@ const Login = () => {
   return (
     <div>
       <div className="bg-zinc-300  h-screen w-screen flex justify-center items-center flex-col">
-        <h1 className="text-3xl text-black  mb-7"> Login Here </h1>
+        <h1 className="text-3xl text-black  "> Login Here </h1>
 
         <form className="h-1/2 w-1/3" onSubmit={handleSubmit}>
           <label className="input input-bordered flex items-center gap-2 m-3">
@@ -65,8 +65,10 @@ const Login = () => {
             <input type="submit" className="grow" />
           </label>
         </form>
-        {msg == true ? (
-          <h1 className="text-3xl text-black"> Email/Password is wrong </h1>
+
+        <Link to="/signup"><button className=" bg-black text-white p-4 "> SignUp </button></Link>
+        {msg ? (
+          <h1 className="text-3xl text-black"> {msg} </h1>
         ) : (
           <></>
         )}
